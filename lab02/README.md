@@ -23,7 +23,7 @@
 ## Setup
 
 ```bash
-cd lab1
+cd lab02
 pip install -r requirements.txt
 ```
 
@@ -184,7 +184,7 @@ pytest tests/ --cov=order_processor --cov-report=term-missing -v
 
 ### 5a: Coverage gate in CI
 
-Look at `.github/workflows/tests.yml`. Notice the `--cov-fail-under=80` flag — this makes the CI job **fail** if coverage drops below 80%.
+If your repo has a `.github/workflows/tests.yml`, look for the `--cov-fail-under=80` flag — this makes the CI job **fail** if coverage drops below 80%. (If you don't have one yet, just test the flag locally.)
 
 ```bash
 # Test it locally:
@@ -195,7 +195,7 @@ If it fails, go back and add more tests until you pass the gate.
 
 ### 5b: Agentic Workflows (bonus)
 
-Look at `.github/workflows/improve-tests.md` — this is a GitHub Agentic Workflow definition that automatically finds and fills coverage gaps.
+If your repo has a `.github/workflows/improve-tests.md`, this is a GitHub Agentic Workflow definition that automatically finds and fills coverage gaps. (This file is not included in the lab — you can create one as an exercise.)
 
 To try it locally (requires `gh` CLI):
 
@@ -275,7 +275,7 @@ pytest tests/ --cov=order_processor --cov-report=term-missing -v
 **Step 2:** Ask Copilot to fill them:
 
 ```bash
-gh copilot task "Look at lab1/order_processor.py. The functions load_order() and charge_customer() need direct unit tests. Write them in lab1/tests/test_cli_generated.py using in-memory SQLite for DB and unittest.mock.patch for HTTP calls."
+gh copilot task "Look at lab02/order_processor.py. The functions load_order() and charge_customer() need direct unit tests. Write them in lab02/tests/test_cli_generated.py using in-memory SQLite for DB and unittest.mock.patch for HTTP calls."
 ```
 
 **Step 3:** Verify the generated tests pass:
@@ -341,5 +341,5 @@ Solutions for each part are in the `solutions/` folder:
 - `process_order()` has 5 distinct code paths — ideal for Part 1
 - `validate_order()` has 8+ conditions — ideal for parametrize in Part 2
 - `notify_customer()` is fully async with aiohttp — forces use of AsyncMock in Part 3
-- `.github/workflows/improve-tests.md` is a real GitHub Agentic Workflow definition
+- `.github/workflows/improve-tests.md` is referenced as a GitHub Agentic Workflow definition — participants can create one as a bonus exercise
 - `datetime.datetime.now()` in `Order.__post_init__` is an intentional testability trap — ask participants how they'd mock it (answer: inject `created_at` explicitly in tests, or monkeypatch `datetime.datetime`)

@@ -1,5 +1,5 @@
 """
-Lab 3 — Refactoring & Migration
+Lab 5 — Refactoring & Migration
 =================================
 A Flask-based REST API for a task manager, written in an older style.
 Participants use Copilot to refactor it and optionally migrate to FastAPI.

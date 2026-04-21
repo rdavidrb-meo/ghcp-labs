@@ -1,5 +1,5 @@
 """
-Lab 2 Solution — All 7 bugs fixed with documentation.
+Lab 3 Solution — All 7 bugs fixed with documentation.
 """
 
 import json

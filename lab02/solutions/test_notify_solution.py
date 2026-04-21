@@ -31,7 +31,7 @@ class TestNotifyCustomer:
         result = await notify_customer(order, "Your order is confirmed!", session=mock_session)
 
         assert result is True
-        mock_session.post.assert_awaited_once_with(
+        mock_session.post.assert_called_once_with(
             f"{NOTIFICATION_URL}/send",
             json={"to": "test@example.com", "body": "Your order is confirmed!", "ref": "ORD-001"},
         )

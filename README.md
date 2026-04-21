@@ -66,4 +66,4 @@ Each lab follows a consistent format:
 2. **Starter skeletons** — partially completed files with TODOs for participants
 3. **Step-by-step instructions** — timed parts with clear objectives
 4. **Hints** — expandable hints for when participants get stuck
-5. **Solutions** — complete reference implementations in a `solutions/` folder
+5. **Solutions** — reference implementations in a `solutions/` folder (where applicable)

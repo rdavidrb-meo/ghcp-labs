@@ -1,5 +1,5 @@
 """
-Starter tests for Lab 2 Part 4.
+Starter tests for Lab 3.
 These tests are written AGAINST THE CORRECT BEHAVIOR,
 so they will FAIL until the bugs in inventory.py are fixed.
 """

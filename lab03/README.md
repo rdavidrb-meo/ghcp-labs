@@ -22,7 +22,7 @@
 ## Setup
 
 ```bash
-cd lab2
+cd lab03
 pip install pytest
 ```
 
@@ -162,7 +162,8 @@ Copilot excels at interpreting tracebacks. Instead of reading stack traces manua
 ## Solutions
 
 - `solutions/inventory_fixed.py` — All 7 bugs fixed with documentation
-- `solutions/test_inventory_solution.py` — Tests proving each fix
+
+> **Note:** `solutions/test_inventory_solution.py` is not yet provided.
 
 ---
 

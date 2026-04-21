@@ -22,7 +22,7 @@
 ## Setup
 
 ```bash
-cd lab6
+cd lab06
 pip install pytest
 ```
 

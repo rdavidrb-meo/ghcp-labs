@@ -22,7 +22,7 @@
 ## Setup
 
 ```bash
-cd lab7
+cd lab07
 pip install pytest bcrypt
 ```
 
@@ -200,8 +200,8 @@ Add the output to `.github/copilot-instructions.md` so future code generation fo
 
 ## Solutions
 
-- `solutions/auth_service_fixed.py` — All 8 vulnerabilities fixed
-- `solutions/test_security.py` — Security regression tests
+- `solutions/auth_service_fixed.py` — fixed version with all 8 vulnerabilities resolved
+- `solutions/test_security.py` — 24 security regression tests (run with `pytest solutions/ -v`)
 
 ---
 
