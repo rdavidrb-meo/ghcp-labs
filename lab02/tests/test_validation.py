@@ -14,28 +14,7 @@ Hints (try on your own first!):
 """
 
 import pytest
-from order_processor import Order, OrderItem, validate_order
-
-
-# ── Part A: Fixture factory ──────────────────────────────────────────
-# TODO: Move this into conftest.py so it's shared across all test files.
-
-@pytest.fixture
-def make_order():
-    """
-    Factory fixture — returns a *function* that creates an Order.
-    Usage in tests:  order = make_order(discount_pct=110)
-    """
-    def _factory(**overrides):
-        defaults = dict(
-            order_id="ORD-001",
-            customer_email="test@example.com",
-            items=[OrderItem("PROD-1", "Widget", 2, 10.00)],
-            discount_pct=0.0,
-        )
-        defaults.update(overrides)
-        return Order(**defaults)
-    return _factory
+from order_processor import OrderItem, validate_order
 
 
 # ── Part B: Parametrized validation tests ────────────────────────────
@@ -43,35 +22,39 @@ def make_order():
 class TestValidateOrder:
 
     def test_valid_order_has_no_errors(self, make_order):
-        # TODO: Create a valid order and assert validate_order returns []
-        pytest.skip("TODO: implement this test")
+        order = make_order()
+        assert validate_order(order) == []
 
-    # TODO: Use @pytest.mark.parametrize to test these cases in ONE test function:
-    #
-    #   | order_kwargs                        | expected error substring          |
-    #   |-------------------------------------|-----------------------------------|
-    #   | order_id=""                          | "order_id is required"            |
-    #   | order_id="   "                       | "order_id is required"            |
-    #   | customer_email="no-at-sign"          | "customer_email is invalid"       |
-    #   | customer_email=""                    | "customer_email is invalid"       |
-    #   | items=[]                             | "at least one item"               |
-    #   | discount_pct=-5                      | "between 0 and 100"               |
-    #   | discount_pct=101                     | "between 0 and 100"               |
-    #
-    # Skeleton:
-    #
-    # @pytest.mark.parametrize("order_kwargs,expected_error", [
-    #     ({"order_id": ""},            "order_id is required"),
-    #     ...
-    # ])
-    # def test_single_validation_error(self, make_order, order_kwargs, expected_error):
-    #     order = make_order(**order_kwargs)
-    #     errors = validate_order(order)
-    #     assert any(expected_error in e for e in errors)
+    @pytest.mark.parametrize(
+        "order_kwargs, expected_error",
+        [
+            ({"order_id": ""}, "order_id is required"),
+            ({"order_id": " "}, "order_id is required"),
+            ({"customer_email": "no-at"}, "customer_email is invalid"),
+            ({"customer_email": ""}, "customer_email is invalid"),
+            ({"items": []}, "at least one item"),
+            ({"discount_pct": -5}, "between 0 and 100"),
+            ({"discount_pct": 101}, "between 0 and 100"),
+        ],
+    )
+    def test_single_validation_error(self, make_order, order_kwargs, expected_error):
+        order = make_order(**order_kwargs)
+        errors = validate_order(order)
+        assert any(expected_error in e for e in errors)
 
-    # TODO: Test that boundary values discount_pct=0 and discount_pct=100 are VALID
-    # @pytest.mark.parametrize("discount", [0, 100])
-    # def test_boundary_discounts_are_valid(self, make_order, discount):
-    #     ...
+    @pytest.mark.parametrize("discount", [0, 100])
+    def test_boundary_discounts_are_valid(self, make_order, discount):
+        order = make_order(discount_pct=discount)
+        assert validate_order(order) == []
 
-    # TODO: Test item-level validation (quantity <= 0, unit_price < 0)
+    @pytest.mark.parametrize(
+        "items, expected_error",
+        [
+            ([OrderItem("PROD-1", "Widget", 0, 10.00)], "quantity must be positive"),
+            ([OrderItem("PROD-1", "Widget", 1, -0.01)], "unit_price cannot be negative"),
+        ],
+    )
+    def test_item_level_validation(self, make_order, items, expected_error):
+        order = make_order(items=items)
+        errors = validate_order(order)
+        assert any(expected_error in e for e in errors)

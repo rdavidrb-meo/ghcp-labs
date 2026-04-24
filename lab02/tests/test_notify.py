@@ -17,8 +17,9 @@ Hints (try on your own first!):
 """
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
-from order_processor import Order, OrderItem, notify_customer
+import aiohttp
+from unittest.mock import AsyncMock
+from order_processor import Order, OrderItem, notify_customer, NOTIFICATION_URL
 
 
 def make_test_order():
@@ -33,24 +34,38 @@ class TestNotifyCustomer:
 
     @pytest.mark.asyncio
     async def test_successful_notification(self):
-        # TODO:
-        # 1. Create a mock session (AsyncMock)
-        # 2. Set mock_session.post.return_value.__aenter__.return_value.status = 200
-        # 3. Call await notify_customer(order, "Your order is confirmed!", session=mock_session)
-        # 4. Assert result is True
-        # 5. Assert mock_session.post was awaited once with correct URL and JSON
-        pytest.skip("TODO: implement this test")
+        mock_session = AsyncMock(spec=aiohttp.ClientSession)
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_session.post.return_value.__aenter__.return_value = mock_response
+
+        order = make_test_order()
+        result = await notify_customer(order, "Your order is confirmed!", session=mock_session)
+
+        assert result is True
+        mock_session.post.assert_called_once_with(
+            f"{NOTIFICATION_URL}/send",
+            json={"to": "test@example.com", "body": "Your order is confirmed!", "ref": "ORD-001"},
+        )
 
     @pytest.mark.asyncio
     async def test_failed_notification_non_200(self):
-        # TODO:
-        # 1. Same setup but set status = 500
-        # 2. Assert result is False
-        pytest.skip("TODO: implement this test")
+        mock_session = AsyncMock(spec=aiohttp.ClientSession)
+        mock_response = AsyncMock()
+        mock_response.status = 500
+        mock_session.post.return_value.__aenter__.return_value = mock_response
+
+        order = make_test_order()
+        result = await notify_customer(order, "Hello", session=mock_session)
+
+        assert result is False
 
     @pytest.mark.asyncio
     async def test_network_error_returns_false(self):
-        # TODO:
-        # 1. Make mock_session.post.side_effect = aiohttp.ClientError()
-        # 2. Assert result is False
-        pytest.skip("TODO: implement this test")
+        mock_session = AsyncMock(spec=aiohttp.ClientSession)
+        mock_session.post.side_effect = aiohttp.ClientError()
+
+        order = make_test_order()
+        result = await notify_customer(order, "Hello", session=mock_session)
+
+        assert result is False
