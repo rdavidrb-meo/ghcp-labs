@@ -1,0 +1,41 @@
+name: improve-tests-on-push
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  coverage-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lab02
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run coverage analysis
+        run: |
+          pytest tests/ \
+            --cov=order_processor \
+            --cov-report=json \
+            --cov-report=term-missing \
+            --cov-fail-under=90 \
+            -v
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-lab02
+          path: lab02/coverage.json
+          if-no-files-found: warn
