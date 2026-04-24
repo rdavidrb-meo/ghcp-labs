@@ -1,0 +1,66 @@
+name: improve-tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  improve-tests-report:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lab02
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run coverage analysis and collect report
+        run: |
+          pytest tests/ \
+            --cov=order_processor \
+            --cov-report=json \
+            --cov-report=term-missing \
+            -v
+
+      - name: Summarize uncovered lines
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report_path = Path("coverage.json")
+          if not report_path.exists():
+              print("coverage.json not found")
+              raise SystemExit(1)
+
+          report = json.loads(report_path.read_text())
+          file_key = next((k for k in report.get("files", {}) if k.endswith("order_processor.py")), None)
+          if not file_key:
+              print("order_processor.py not found in coverage report")
+              raise SystemExit(1)
+
+          summary = report["files"][file_key]
+          missing = summary.get("missing_lines", [])
+          print(f"File: {file_key}")
+          print(f"Missing lines ({len(missing)}): {missing}")
+          PY
+
+      - name: Upload improve-workflow artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: improve-tests-artifacts-lab02
+          path: |
+            lab02/coverage.json
+          if-no-files-found: warn

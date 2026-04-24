@@ -39,3 +39,9 @@ jobs:
           name: coverage-report-lab02
           path: lab02/coverage.json
           if-no-files-found: warn
+
+  run-improve-workflow:
+    needs: coverage-check
+    if: ${{ always() }}
+    uses: ./.github/workflows/improve-tests.yml
+    secrets: inherit
